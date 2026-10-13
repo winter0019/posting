@@ -13,8 +13,8 @@ def generate_zonal_pdf(zone_name, records):
     doc = SimpleDocTemplate(
         file_path,
         pagesize=A4,
-        rightMargin=30,
-        leftMargin=30,
+        rightMargin=25,
+        leftMargin=25,
         topMargin=30,
         bottomMargin=30
     )
@@ -52,6 +52,25 @@ def generate_zonal_pdf(zone_name, records):
         alignment=1,
         textColor=colors.HexColor('#555555')
     )
+    
+    # Cell text style to ensure wrapping
+    cell_style = ParagraphStyle(
+        'CellStyle',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor('#222222')
+    )
+    
+    header_cell_style = ParagraphStyle(
+        'HeaderCellStyle',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=8,
+        leading=10,
+        textColor=colors.white
+    )
 
     # Header details
     elements.append(Paragraph("NATIONAL YOUTH SERVICE CORPS - KATSINA STATE", title_style))
@@ -78,41 +97,42 @@ def generate_zonal_pdf(zone_name, records):
     elements.append(Paragraph(stats_text, meta_style))
     elements.append(Spacer(1, 10))
 
-    # Table Data Structure
+    # Table Data Structure with Wrapped Paragraphs
     table_data = [
-        ["S/N", "State Code", "Full Name", "Spouse Location", "Assigned LGA", "Current PPA", "Phone"]
+        [
+            Paragraph("S/N", header_cell_style),
+            Paragraph("State Code", header_cell_style),
+            Paragraph("Full Name", header_cell_style),
+            Paragraph("Spouse Location", header_cell_style),
+            Paragraph("Assigned LGA", header_cell_style),
+            Paragraph("Current PPA", header_cell_style),
+            Paragraph("Phone", header_cell_style)
+        ]
     ]
 
     for idx, r in enumerate(records, start=1):
         table_data.append([
-            str(idx),
-            str(r.get('state_code', '')),
-            str(r.get('full_name', '')),
-            str(r.get('spouse_location', '')),
-            str(r.get('assigned_lga', '')),
-            str(r.get('current_ppa', '')),
-            str(r.get('phone_number', ''))
+            Paragraph(str(idx), cell_style),
+            Paragraph(str(r.get('state_code', '')), cell_style),
+            Paragraph(str(r.get('full_name', '')), cell_style),
+            Paragraph(str(r.get('spouse_location', '')), cell_style),
+            Paragraph(str(r.get('assigned_lga', '')), cell_style),
+            Paragraph(str(r.get('current_ppa', 'None')), cell_style),
+            Paragraph(str(r.get('phone_number', '')), cell_style)
         ])
 
-    # Table Styling for A4 Page Fitting
-    col_widths = [25, 65, 110, 100, 75, 80, 75]
+    # Adjusted A4 Table Column Widths (Total width fits page safely)
+    col_widths = [22, 60, 95, 130, 75, 70, 65]
     t = Table(table_data, colWidths=col_widths, repeatRows=1)
     
     t.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#006633')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 8),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 5),
-        ('TOPPADDING', (0, 0), (-1, 0), 5),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
         ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#CCCCCC')),
         ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#F9F9F9')]),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 8),
-        ('BOTTOMPADDING', (0, 1), (-1, -1), 4),
-        ('TOPPADDING', (0, 1), (-1, -1), 4),
     ]))
 
     elements.append(t)
