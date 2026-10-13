@@ -17,10 +17,9 @@
     <header class="nysc-green text-white shadow-md">
         <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <!-- NYSC Official Logo Emblem -->
-                <div class="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center border-2 border-green-200 shadow-md p-0.5">
-                    <span class="text-[9px] font-extrabold nysc-green-text tracking-tighter leading-none">NYSC</span>
-                    <span class="text-[7px] font-bold text-gray-700 tracking-tighter leading-none">NIGERIA</span>
+                <!-- NYSC Official Crest / Logo -->
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center p-1 shadow-md overflow-hidden border-2 border-green-200">
+                    <img src="{{ url_for('static', filename='nysc-logo.png') }}" alt="NYSC Logo" class="w-full h-full object-contain" onerror="this.onerror=null; this.parentNode.innerHTML='<span class=\'text-[10px] font-extrabold nysc-green-text\'>NYSC</span>';">
                 </div>
                 <div>
                     <h1 class="text-base sm:text-lg font-bold tracking-tight">NYSC Katsina D&R Marital Posting Tracker</h1>
