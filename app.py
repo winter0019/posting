@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 from werkzeug.utils import secure_filename
 from models import db, MarriedCorpsMember
 from parser import parse_corps_member_excel, assign_zone_to_lga
@@ -26,11 +26,8 @@ with app.app_context():
 
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({
-        "status": "active",
-        "system": "Katsina NYSC Married Corps Members Zonal Tracking System",
-        "zones": ["Katsina", "Daura", "Dutsinma", "Funtua"]
-    })
+    # Renders the mobile and desktop friendly web interface
+    return render_template('index.html')
 
 @app.route('/api/upload-married-corpers', methods=['POST'])
 def upload_excel():
