@@ -1,11 +1,14 @@
 services:
   - type: web
-    name: katsina-married-corpers-app
+    name: nysc-katsina-dr-mpt
     env: python
     region: frankfurt
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    # Explicitly specify Python 3.11 using Render's environment variable
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
       - key: DATABASE_URL
         sync: false
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
