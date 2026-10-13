@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: katsina-married-corpers-app
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
