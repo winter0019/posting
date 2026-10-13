@@ -14,11 +14,10 @@
 </head>
 <body class="bg-gray-50 min-h-screen font-sans">
 
-    <!-- Header Navigation with NYSC Green & Logo -->
+    <!-- Header Navigation -->
     <header class="nysc-green text-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
-                <!-- NYSC Logo Placeholder / Official Emblem -->
                 <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center p-1 shadow-inner">
                     <span class="text-xs font-bold nysc-green-text">NYSC</span>
                 </div>
@@ -33,7 +32,7 @@
 
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        <!-- Action Grid: Excel Import & Manual Posting Assignment -->
+        <!-- Action Grid: Excel Import & Search/Assignment Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             <!-- 1. Import Master Excel Sheet -->
@@ -47,26 +46,29 @@
                 <div id="uploadMsg" class="mt-2 text-xs font-medium"></div>
             </div>
 
-            <!-- 2. Search & Assign Posting -->
+            <!-- 2. Search & Assign Posting (Hidden details until search) -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
                 <h2 class="text-sm font-bold text-gray-800 mb-1">2. Search & Assign Proximity Posting</h2>
-                <p class="text-xs text-gray-500 mb-3">Search member by State Code, select nearest LGA/Zone, and submit.</p>
+                <p class="text-xs text-gray-500 mb-3">Search member by State Code to reveal posting options.</p>
                 
                 <div class="space-y-3">
                     <div class="flex gap-2">
                         <input type="text" id="searchQuery" placeholder="Enter State Code (e.g. KT/26A/1234)" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-green-600 focus:outline-none">
-                        <button onclick="searchMember()" class="bg-gray-800 text-white px-4 py-1.5 rounded-lg text-xs hover:bg-gray-700 transition">Search</button>
+                        <button onclick="searchMember()" class="nysc-green text-white px-4 py-1.5 rounded-lg text-xs nysc-green-hover transition whitespace-nowrap">Search</button>
                     </div>
 
-                    <!-- Search Result Details Card (Hidden by default) -->
-                    <div id="searchResultContainer" class="hidden p-3 bg-green-50 border border-green-200 rounded-lg space-y-2 text-xs">
-                        <div class="font-semibold text-gray-800" id="resName">Name: </div>
-                        <div class="text-gray-600" id="resSpouse">Spouse Location: </div>
+                    <!-- Search Result Details & Selection Panel (Completely Hidden Until Search) -->
+                    <div id="searchResultContainer" class="hidden p-4 bg-green-50 border border-green-200 rounded-lg space-y-3 text-xs">
+                        <div>
+                            <p class="font-bold text-gray-800 text-sm" id="resName">Name: --</p>
+                            <p class="text-gray-600 mt-0.5" id="resSpouse">Spouse Location: --</p>
+                            <p class="text-gray-600" id="resCurrentLga">Current Record LGA: --</p>
+                        </div>
                         
-                        <div class="pt-2 border-t border-green-200 flex flex-col sm:flex-row gap-2 items-center">
-                            <select id="targetLga" class="w-full px-2 py-1.5 border border-gray-300 rounded text-xs bg-white">
-                                <option value="">-- Select Nearest LGA --</option>
-                                <!-- Katsina Zone -->
+                        <div class="pt-3 border-t border-green-200 space-y-2">
+                            <label class="block font-semibold text-gray-700">Select Target Posting LGA (Auto-assigns Zone):</label>
+                            <select id="targetLga" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-green-600 focus:outline-none">
+                                <option value="">-- Choose Nearest LGA --</option>
                                 <optgroup label="Katsina Zone">
                                     <option value="Katsina">Katsina</option>
                                     <option value="Batagarawa">Batagarawa</option>
@@ -74,7 +76,6 @@
                                     <option value="Charanchi">Charanchi</option>
                                     <option value="Kurfi">Kurfi</option>
                                 </optgroup>
-                                <!-- Daura Zone -->
                                 <optgroup label="Daura Zone">
                                     <option value="Daura">Daura</option>
                                     <option value="Mai'Adua">Mai'Adua</option>
@@ -85,7 +86,6 @@
                                     <option value="Mashi">Mashi</option>
                                     <option value="Dutsi">Dutsi</option>
                                 </optgroup>
-                                <!-- Dutsinma Zone -->
                                 <optgroup label="Dutsinma Zone">
                                     <option value="Dutsinma">Dutsinma</option>
                                     <option value="Safana">Safana</option>
@@ -94,7 +94,6 @@
                                     <option value="Kusada">Kusada</option>
                                     <option value="Ingawa">Ingawa</option>
                                 </optgroup>
-                                <!-- Funtua Zone -->
                                 <optgroup label="Funtua Zone">
                                     <option value="Funtua">Funtua</option>
                                     <option value="Bakori">Bakori</option>
@@ -105,7 +104,7 @@
                                     <option value="Malumfashi">Malumfashi</option>
                                 </optgroup>
                             </select>
-                            <button onclick="submitPosting()" class="w-full sm:w-auto nysc-green text-white px-4 py-1.5 rounded text-xs nysc-green-hover transition whitespace-nowrap">Submit Posting</button>
+                            <button onclick="submitPosting()" class="w-full nysc-green text-white py-2 rounded-lg text-xs font-medium nysc-green-hover transition shadow-sm">Submit & Save Posting</button>
                         </div>
                     </div>
                     <div id="searchMsg" class="text-xs font-medium"></div>
@@ -209,6 +208,7 @@
             if (!query) {
                 msg.innerText = 'Please enter a State Code.';
                 msg.className = 'text-xs font-medium text-red-600';
+                container.classList.add('hidden');
                 return;
             }
 
@@ -223,14 +223,18 @@
                     activeMemberStateCode = data.member.state_code;
                     document.getElementById('resName').innerText = `Name: ${data.member.full_name} (${data.member.state_code})`;
                     document.getElementById('resSpouse').innerText = `Spouse Location: ${data.member.spouse_location || 'Not Specified'}`;
+                    document.getElementById('resCurrentLga').innerText = `Current LGA / Zone: ${data.member.assigned_lga || 'Unassigned'} (${data.member.zone || 'Pending'})`;
+                    
+                    // Reveal the selection and assignment panel
                     container.classList.remove('hidden');
                     msg.innerText = '';
                 } else {
                     container.classList.add('hidden');
-                    msg.innerText = 'Corps member not found in master sheet. Please import the Excel file first.';
+                    msg.innerText = 'Corps member not found. Please check the State Code or import master sheet.';
                     msg.className = 'text-xs font-medium text-red-600';
                 }
             } catch (err) {
+                container.classList.add('hidden');
                 msg.innerText = 'Network error during search.';
                 msg.className = 'text-xs font-medium text-red-600';
             }
@@ -241,7 +245,7 @@
             const msg = document.getElementById('searchMsg');
 
             if (!lga) {
-                alert('Please select a target LGA.');
+                alert('Please select a target LGA from the dropdown.');
                 return;
             }
 
@@ -254,7 +258,7 @@
                 const data = await res.json();
 
                 if (res.ok) {
-                    msg.innerText = 'Posting assigned and saved to database successfully!';
+                    msg.innerText = 'Posting successfully saved to database!';
                     msg.className = 'text-xs font-medium text-green-700';
                     document.getElementById('searchResultContainer').classList.add('hidden');
                     document.getElementById('searchQuery').value = '';
