@@ -4,71 +4,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NYSC Katsina D&R - Marital Posting Tracker</title>
-    <!-- Tailwind CSS for mobile & desktop responsiveness -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .nysc-green { background-color: #006633; }
+        .nysc-green-text { color: #006633; }
+        .nysc-green-hover:hover { background-color: #004d26; }
+        .nysc-border { border-color: #006633; }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen font-sans">
+<body class="bg-gray-50 min-h-screen font-sans">
 
-    <!-- Header Navigation -->
-    <header class="bg-blue-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-            <h1 class="text-lg sm:text-xl font-bold text-center sm:text-left">NYSC Katsina D&R Marital Posting Tracker</h1>
-            <span class="text-xs bg-blue-800 px-3 py-1 rounded-full uppercase tracking-wider font-semibold">Deployment & Relocation</span>
+    <!-- Header Navigation with NYSC Green & Logo -->
+    <header class="nysc-green text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <!-- NYSC Logo Placeholder / Official Emblem -->
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center p-1 shadow-inner">
+                    <span class="text-xs font-bold nysc-green-text">NYSC</span>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold">NYSC Katsina D&R Marital Posting Tracker</h1>
+                    <p class="text-[11px] text-green-100">Deployment & Relocation Branch | Spouse Proximity Management</p>
+                </div>
+            </div>
+            <span class="text-xs bg-black/20 px-3 py-1 rounded-full uppercase tracking-wider font-semibold">Katsina State</span>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
 
-        <!-- Action Grid: Upload & Download Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Action Grid: Excel Import & Manual Posting Assignment -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
-            <!-- Excel Upload Card -->
+            <!-- 1. Import Master Excel Sheet -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-md font-bold text-gray-800 mb-2">Import Master Excel Sheet</h2>
-                <p class="text-xs text-gray-600 mb-4">Upload the latest Excel file containing married corps members' details.</p>
+                <h2 class="text-sm font-bold text-gray-800 mb-1">1. Import Master Excel Database</h2>
+                <p class="text-xs text-gray-500 mb-4">Upload the master list of registered married corps members.</p>
                 <form id="uploadForm" class="space-y-3">
-                    <input type="file" id="excelFile" accept=".xlsx, .xls" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                    <button type="submit" class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg text-sm hover:bg-blue-700 transition">Upload & Sync</button>
+                    <input type="file" id="excelFile" accept=".xlsx, .xls" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-800 hover:file:bg-green-100 cursor-pointer">
+                    <button type="submit" class="w-full nysc-green text-white font-medium py-2 px-4 rounded-lg text-xs nysc-green-hover transition">Upload & Sync Database</button>
                 </form>
-                <div id="uploadMsg" class="mt-3 text-xs font-medium"></div>
+                <div id="uploadMsg" class="mt-2 text-xs font-medium"></div>
             </div>
 
-            <!-- PDF Report Generator Card -->
+            <!-- 2. Search & Assign Posting -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-md font-bold text-gray-800 mb-2">Download Zonal PDF Report</h2>
-                <p class="text-xs text-gray-600 mb-4">Generate and download official PDF posting schedules for headquarters.</p>
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <select id="reportZone" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
-                        <option value="All">All Zones</option>
-                        <option value="Katsina">Katsina Zone</option>
-                        <option value="Daura">Daura Zone</option>
-                        <option value="Dutsinma">Dutsinma Zone</option>
-                        <option value="Funtua">Funtua Zone</option>
-                    </select>
-                    <button onclick="downloadPDF()" class="bg-green-600 text-white font-medium py-2 px-4 rounded-lg text-sm hover:bg-green-700 transition whitespace-nowrap">Download PDF</button>
+                <h2 class="text-sm font-bold text-gray-800 mb-1">2. Search & Assign Proximity Posting</h2>
+                <p class="text-xs text-gray-500 mb-3">Search member by State Code, select nearest LGA/Zone, and submit.</p>
+                
+                <div class="space-y-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="searchQuery" placeholder="Enter State Code (e.g. KT/26A/1234)" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-green-600 focus:outline-none">
+                        <button onclick="searchMember()" class="bg-gray-800 text-white px-4 py-1.5 rounded-lg text-xs hover:bg-gray-700 transition">Search</button>
+                    </div>
+
+                    <!-- Search Result Details Card (Hidden by default) -->
+                    <div id="searchResultContainer" class="hidden p-3 bg-green-50 border border-green-200 rounded-lg space-y-2 text-xs">
+                        <div class="font-semibold text-gray-800" id="resName">Name: </div>
+                        <div class="text-gray-600" id="resSpouse">Spouse Location: </div>
+                        
+                        <div class="pt-2 border-t border-green-200 flex flex-col sm:flex-row gap-2 items-center">
+                            <select id="targetLga" class="w-full px-2 py-1.5 border border-gray-300 rounded text-xs bg-white">
+                                <option value="">-- Select Nearest LGA --</option>
+                                <!-- Katsina Zone -->
+                                <optgroup label="Katsina Zone">
+                                    <option value="Katsina">Katsina</option>
+                                    <option value="Batagarawa">Batagarawa</option>
+                                    <option value="Rimi">Rimi</option>
+                                    <option value="Charanchi">Charanchi</option>
+                                    <option value="Kurfi">Kurfi</option>
+                                </optgroup>
+                                <!-- Daura Zone -->
+                                <optgroup label="Daura Zone">
+                                    <option value="Daura">Daura</option>
+                                    <option value="Mai'Adua">Mai'Adua</option>
+                                    <option value="Zango">Zango</option>
+                                    <option value="Sandamu">Sandamu</option>
+                                    <option value="Baure">Baure</option>
+                                    <option value="Mani">Mani</option>
+                                    <option value="Mashi">Mashi</option>
+                                    <option value="Dutsi">Dutsi</option>
+                                </optgroup>
+                                <!-- Dutsinma Zone -->
+                                <optgroup label="Dutsinma Zone">
+                                    <option value="Dutsinma">Dutsinma</option>
+                                    <option value="Safana">Safana</option>
+                                    <option value="Batsari">Batsari</option>
+                                    <option value="Kankia">Kankia</option>
+                                    <option value="Kusada">Kusada</option>
+                                    <option value="Ingawa">Ingawa</option>
+                                </optgroup>
+                                <!-- Funtua Zone -->
+                                <optgroup label="Funtua Zone">
+                                    <option value="Funtua">Funtua</option>
+                                    <option value="Bakori">Bakori</option>
+                                    <option value="Danja">Danja</option>
+                                    <option value="Faskari">Faskari</option>
+                                    <option value="Kankara">Kankara</option>
+                                    <option value="Sabuwa">Sabuwa</option>
+                                    <option value="Malumfashi">Malumfashi</option>
+                                </optgroup>
+                            </select>
+                            <button onclick="submitPosting()" class="w-full sm:w-auto nysc-green text-white px-4 py-1.5 rounded text-xs nysc-green-hover transition whitespace-nowrap">Submit Posting</button>
+                        </div>
+                    </div>
+                    <div id="searchMsg" class="text-xs font-medium"></div>
                 </div>
             </div>
 
         </div>
 
-        <!-- Zonal Filter Tabs & Data Table Section -->
+        <!-- Download PDF Report Card -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h2 class="text-sm font-bold text-gray-800">Generate Official Zonal Posting Report</h2>
+                <p class="text-xs text-gray-500">Download formatted PDF records categorized by operational zone.</p>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <select id="reportZone" class="px-3 py-1.5 border border-gray-300 rounded-lg text-xs bg-white">
+                    <option value="All">All Zones</option>
+                    <option value="Katsina">Katsina Zone</option>
+                    <option value="Daura">Daura Zone</option>
+                    <option value="Dutsinma">Dutsinma Zone</option>
+                    <option value="Funtua">Funtua Zone</option>
+                </select>
+                <button onclick="downloadPDF()" class="nysc-green text-white font-medium py-1.5 px-4 rounded-lg text-xs nysc-green-hover transition whitespace-nowrap">Download PDF</button>
+            </div>
+        </div>
+
+        <!-- Database Records Table Section -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="p-4 sm:p-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50">
-                
-                <!-- Zone Selector Buttons -->
                 <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-center sm:justify-start">
-                    <button onclick="filterZone('All')" class="zone-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition">All</button>
+                    <button onclick="filterZone('All')" class="zone-btn px-3 py-1.5 rounded-lg text-xs font-semibold nysc-green text-white transition">All Zones</button>
                     <button onclick="filterZone('Katsina')" class="zone-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Katsina</button>
                     <button onclick="filterZone('Daura')" class="zone-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Daura</button>
                     <button onclick="filterZone('Dutsinma')" class="zone-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Dutsinma</button>
                     <button onclick="filterZone('Funtua')" class="zone-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Funtua</button>
                 </div>
-
-                <!-- Search Input -->
-                <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Search by name or state code..." class="px-3 py-1.5 border border-gray-300 rounded-lg text-xs w-full sm:w-64 focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="tableFilter" onkeyup="filterTable()" placeholder="Filter active records..." class="px-3 py-1.5 border border-gray-300 rounded-lg text-xs w-full sm:w-64 focus:ring-2 focus:ring-green-600 focus:outline-none">
             </div>
 
-            <!-- Responsive Table Container -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -78,13 +154,11 @@
                             <th class="py-3 px-4">Spouse Location</th>
                             <th class="py-3 px-4">Assigned LGA</th>
                             <th class="py-3 px-4">Zone</th>
-                            <th class="py-3 px-4">Current PPA</th>
+                            <th class="py-3 px-4">Phone</th>
                         </tr>
                     </thead>
                     <tbody id="corpersTableBody" class="divide-y divide-gray-200 text-xs text-gray-700">
-                        <tr>
-                            <td colspan="6" class="py-6 text-center text-gray-500">Loading records...</td>
-                        </tr>
+                        <tr><td colspan="6" class="py-6 text-center text-gray-500">Loading records...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -92,9 +166,10 @@
 
     </main>
 
-    <!-- Frontend JavaScript Logic -->
+    <!-- JavaScript Application Logic -->
     <script>
         let currentZone = 'All';
+        let activeMemberStateCode = null;
 
         async function fetchRecords(zone = 'All') {
             currentZone = zone;
@@ -105,19 +180,19 @@
                 tbody.innerHTML = '';
 
                 if (result.data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-gray-500">No records found for this zone.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-gray-500">No records found.</td></tr>`;
                     return;
                 }
 
                 result.data.forEach(c => {
                     tbody.innerHTML += `
                         <tr class="hover:bg-gray-50 transition">
-                            <td class="py-3 px-4 font-semibold text-blue-600">${c.state_code}</td>
+                            <td class="py-3 px-4 font-semibold nysc-green-text">${c.state_code}</td>
                             <td class="py-3 px-4 font-medium">${c.full_name}</td>
                             <td class="py-3 px-4">${c.spouse_location || 'N/A'}</td>
-                            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-green-50 text-green-700 rounded-full font-medium text-[11px]">${c.assigned_lga}</span></td>
-                            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full font-medium text-[11px]">${c.zone}</span></td>
-                            <td class="py-3 px-4 text-gray-600">${c.current_ppa || 'N/A'}</td>
+                            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-green-50 text-green-800 rounded-full font-medium text-[11px]">${c.assigned_lga || 'Unassigned'}</span></td>
+                            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-blue-50 text-blue-800 rounded-full font-medium text-[11px]">${c.zone || 'Pending'}</span></td>
+                            <td class="py-3 px-4 text-gray-600">${c.phone_number || 'N/A'}</td>
                         </tr>
                     `;
                 });
@@ -126,12 +201,80 @@
             }
         }
 
+        async function searchMember() {
+            const query = document.getElementById('searchQuery').value.trim();
+            const msg = document.getElementById('searchMsg');
+            const container = document.getElementById('searchResultContainer');
+
+            if (!query) {
+                msg.innerText = 'Please enter a State Code.';
+                msg.className = 'text-xs font-medium text-red-600';
+                return;
+            }
+
+            msg.innerText = 'Searching database...';
+            msg.className = 'text-xs font-medium text-blue-600';
+
+            try {
+                const res = await fetch(`/api/search-corper?state_code=${encodeURIComponent(query)}`);
+                const data = await res.json();
+
+                if (res.ok && data.member) {
+                    activeMemberStateCode = data.member.state_code;
+                    document.getElementById('resName').innerText = `Name: ${data.member.full_name} (${data.member.state_code})`;
+                    document.getElementById('resSpouse').innerText = `Spouse Location: ${data.member.spouse_location || 'Not Specified'}`;
+                    container.classList.remove('hidden');
+                    msg.innerText = '';
+                } else {
+                    container.classList.add('hidden');
+                    msg.innerText = 'Corps member not found in master sheet. Please import the Excel file first.';
+                    msg.className = 'text-xs font-medium text-red-600';
+                }
+            } catch (err) {
+                msg.innerText = 'Network error during search.';
+                msg.className = 'text-xs font-medium text-red-600';
+            }
+        }
+
+        async function submitPosting() {
+            const lga = document.getElementById('targetLga').value;
+            const msg = document.getElementById('searchMsg');
+
+            if (!lga) {
+                alert('Please select a target LGA.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/assign-posting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ state_code: activeMemberStateCode, assigned_lga: lga })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    msg.innerText = 'Posting assigned and saved to database successfully!';
+                    msg.className = 'text-xs font-medium text-green-700';
+                    document.getElementById('searchResultContainer').classList.add('hidden');
+                    document.getElementById('searchQuery').value = '';
+                    fetchRecords(currentZone);
+                } else {
+                    msg.innerText = `Error: ${data.error}`;
+                    msg.className = 'text-xs font-medium text-red-600';
+                }
+            } catch (err) {
+                msg.innerText = 'Failed to submit posting.';
+                msg.className = 'text-xs font-medium text-red-600';
+            }
+        }
+
         function filterZone(zone) {
             document.querySelectorAll('.zone-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.remove('nysc-green', 'text-white');
                 btn.classList.add('bg-white', 'text-gray-700', 'border');
-                if (btn.innerText.includes(zone) || (zone === 'All' && btn.innerText === 'All')) {
-                    btn.classList.add('bg-blue-600', 'text-white');
+                if (btn.innerText.includes(zone) || (zone === 'All' && btn.innerText.includes('All'))) {
+                    btn.classList.add('nysc-green', 'text-white');
                     btn.classList.remove('bg-white', 'text-gray-700', 'border');
                 }
             });
@@ -144,31 +287,31 @@
             const msgDiv = document.getElementById('uploadMsg');
 
             if (!fileInput.files[0]) {
-                msgDiv.innerText = 'Please select an Excel file first.';
-                msgDiv.className = 'mt-3 text-xs font-medium text-red-600';
+                msgDiv.innerText = 'Please select an Excel file.';
+                msgDiv.className = 'mt-2 text-xs font-medium text-red-600';
                 return;
             }
 
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
-            msgDiv.innerText = 'Uploading and syncing records...';
-            msgDiv.className = 'mt-3 text-xs font-medium text-blue-600';
+            msgDiv.innerText = 'Uploading and syncing...';
+            msgDiv.className = 'mt-2 text-xs font-medium text-blue-600';
 
             try {
                 const res = await fetch('/api/upload-married-corpers', { method: 'POST', body: formData });
                 const data = await res.json();
                 if (res.ok) {
                     msgDiv.innerText = data.message;
-                    msgDiv.className = 'mt-3 text-xs font-medium text-green-600';
+                    msgDiv.className = 'mt-2 text-xs font-medium text-green-700';
                     fileInput.value = '';
                     fetchRecords(currentZone);
                 } else {
                     msgDiv.innerText = `Error: ${data.error}`;
-                    msgDiv.className = 'mt-3 text-xs font-medium text-red-600';
+                    msgDiv.className = 'mt-2 text-xs font-medium text-red-600';
                 }
             } catch (err) {
-                msgDiv.innerText = 'Network error during file upload.';
-                msgDiv.className = 'mt-3 text-xs font-medium text-red-600';
+                msgDiv.innerText = 'Upload failed.';
+                msgDiv.className = 'mt-2 text-xs font-medium text-red-600';
             }
         });
 
@@ -177,16 +320,14 @@
             window.location.href = `/api/download-report/${zone}`;
         }
 
-        function searchTable() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
+        function filterTable() {
+            const input = document.getElementById('tableFilter').value.toLowerCase();
             const rows = document.getElementById('corpersTableBody').getElementsByTagName('tr');
             for (let i = 0; i < rows.length; i++) {
-                const text = rows[i].innerText.toLowerCase();
-                rows[i].style.display = text.includes(input) ? '' : 'none';
+                rows[i].style.display = rows[i].innerText.toLowerCase().includes(input) ? '' : 'none';
             }
         }
 
-        // Load all records on page load
         window.onload = () => fetchRecords('All');
     </script>
 </body>
