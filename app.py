@@ -7,10 +7,12 @@ from pdf_generator import generate_zonal_pdf
 
 app = Flask(__name__)
 
-# Database Configuration (PostgreSQL / SQLite fallback)
+# Database Configuration with explicit psycopg2 driver fallback
 DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///katsina_nysc.db')
 if DATABASE_URL.startswith('postgres://'):
-    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql+psycopg2://', 1)
+elif DATABASE_URL.startswith('postgresql://'):
+    DATABASE_URL = DATABASE_URL.replace('postgresql://', 'postgresql+psycopg2://', 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -85,6 +87,34 @@ def upload_excel():
             return jsonify({"error": str(e)}), 500
 
     return jsonify({"error": "Invalid file format. Please upload an Excel (.xlsx or .xls) file."}), 400
+
+@app.route('/api/search-corper', methods=['GET'])
+def search_corper():
+    state_code = request.args.get('state_code', '').strip().upper()
+    member = MarriedCorpsMember.query.filter_by(state_code=state_code).first()
+    if member:
+        return jsonify({"status": "success", "member": member.to_dict()}), 200
+    return jsonify({"error": "Member not found"}), 404
+
+@app.route('/api/assign-posting', methods=['POST'])
+def assign_posting():
+    data = request.get_json()
+    state_code = data.get('state_code')
+    assigned_lga = data.get('assigned_lga')
+    
+    if not state_code or not assigned_lga:
+        return jsonify({"error": "State code and assigned LGA are required"}), 400
+        
+    member = MarriedCorpsMember.query.filter_by(state_code=state_code).first()
+    if not member:
+        return jsonify({"error": "Corps member not found"}), 404
+        
+    zone = assign_zone_to_lga(assigned_lga)
+    member.assigned_lga = assigned_lga
+    member.zone = zone
+    db.session.commit()
+    
+    return jsonify({"message": f"Successfully posted {member.full_name} to {assigned_lga} ({zone} Zone)."}), 200
 
 @app.route('/api/married-corpers', methods=['GET'])
 def get_married_corpers():
