@@ -53,16 +53,19 @@
                 
                 <div class="space-y-3">
                     <div class="flex gap-2">
-                        <input type="text" id="searchQuery" placeholder="Enter State Code (e.g. KT/26A/1234)" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-green-600 focus:outline-none">
+                        <input type="text" id="searchQuery" placeholder="Enter State Code (e.g. KT/26C/0048)" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs focus:ring-2 focus:ring-green-600 focus:outline-none">
                         <button onclick="searchMember()" class="nysc-green text-white px-4 py-1.5 rounded-lg text-xs nysc-green-hover transition whitespace-nowrap">Search</button>
                     </div>
 
                     <!-- Search Result Details & Selection Panel (Hidden until search) -->
-                    <div id="searchResultContainer" class="hidden p-4 bg-green-50 border border-green-200 rounded-lg space-y-3 text-xs">
+                    <div id="searchResultContainer" class="hidden p-4 bg-green-50 border border-green-200 rounded-lg space-y-2 text-xs">
                         <div>
-                            <p class="font-bold text-gray-800 text-sm" id="resName">Name: --</p>
-                            <p class="text-gray-600 mt-0.5" id="resSpouse">Spouse Location: --</p>
-                            <p class="text-gray-600" id="resCurrentLga">Current Record LGA: --</p>
+                            <p class="font-bold text-gray-900 text-sm" id="resName">Name: --</p>
+                            <p class="text-gray-700 mt-1"><strong>State Code:</strong> <span id="resStateCode">--</span></p>
+                            <p class="text-gray-700"><strong>Gender:</strong> <span id="resGender">--</span> | <strong>Origin:</strong> <span id="resOrigin">--</span></p>
+                            <p class="text-gray-700"><strong>Course:</strong> <span id="resCourse">--</span> | <strong>Grade:</strong> <span id="resGrade">--</span></p>
+                            <p class="text-gray-700 mt-1"><strong>Permanent Address:</strong> <span id="resSpouse">--</span></p>
+                            <p class="text-gray-700"><strong>Current LGA / Zone:</strong> <span id="resCurrentLga">--</span></p>
                         </div>
                         
                         <div class="pt-3 border-t border-green-200 space-y-2">
@@ -163,9 +166,14 @@
 
                 if (res.ok && data.member) {
                     activeMemberStateCode = data.member.state_code;
-                    document.getElementById('resName').innerText = `Name: ${data.member.full_name} (${data.member.state_code})`;
-                    document.getElementById('resSpouse').innerText = `Spouse Location: ${data.member.spouse_location || 'Not Specified'}`;
-                    document.getElementById('resCurrentLga').innerText = `Current LGA / Zone: ${data.member.assigned_lga || 'Unassigned'} (${data.member.zone || 'Pending'})`;
+                    document.getElementById('resName').innerText = `Name: ${data.member.full_name}`;
+                    document.getElementById('resStateCode').innerText = data.member.state_code;
+                    document.getElementById('resGender').innerText = data.member.gender || 'N/A';
+                    document.getElementById('resOrigin').innerText = data.member.origin || 'N/A';
+                    document.getElementById('resCourse').innerText = data.member.course || 'N/A';
+                    document.getElementById('resGrade').innerText = data.member.grade || 'N/A';
+                    document.getElementById('resSpouse').innerText = data.member.spouse_location || 'Not Specified';
+                    document.getElementById('resCurrentLga').innerText = `${data.member.assigned_lga || 'Unassigned'} (${data.member.zone || 'Pending'})`;
                     
                     container.classList.remove('hidden');
                     msg.innerText = '';
