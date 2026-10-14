@@ -36,6 +36,11 @@ def parse_corps_member_excel(file_path):
         if full_name == 'Nan' or not full_name:
             full_name = f"Corps Member ({state_code})"
         
+        # Gender mapping ('sex' or 'gender')
+        gender = str(row.get('sex', row.get('gender', ''))).strip().title()
+        if gender == 'Nan':
+            gender = ''
+
         # Phone number handling
         phone_raw = row.get('phone_number', row.get('phone', ''))
         phone_number = str(int(phone_raw)) if pd.notnull(phone_raw) and str(phone_raw).replace('.', '', 1).isdigit() else str(phone_raw)
@@ -44,13 +49,22 @@ def parse_corps_member_excel(file_path):
         spouse_location = str(row.get('permanent_address', row.get('spouse_location', row.get('address', '')))).strip().title()
         assigned_lga = str(row.get('assigned_lga', '')).strip().title()
 
+        # Additional fields: Origin, Course, Grade
+        origin = str(row.get('origin', '')).strip().title()
+        course = str(row.get('course', '')).strip()
+        grade = str(row.get('grade', '')).strip()
+
         if state_code and state_code != 'NAN':
             records.append({
                 'state_code': state_code,
                 'full_name': full_name,
+                'gender': gender if gender != 'Nan' else '',
                 'phone_number': phone_number if phone_number != 'nan' else '',
                 'spouse_location': spouse_location if spouse_location != 'Nan' else '',
-                'assigned_lga': assigned_lga if assigned_lga != 'Nan' else ''
+                'assigned_lga': assigned_lga if assigned_lga != 'Nan' else '',
+                'origin': origin if origin != 'Nan' else '',
+                'course': course if course != 'nan' else '',
+                'grade': grade if grade != 'nan' else ''
             })
 
     return records
