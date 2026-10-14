@@ -28,18 +28,23 @@ def parse_corps_member_excel(file_path):
 
     records = []
     for _, row in df.iterrows():
-        # Flexible mapping supporting both your standard headers and user alternative headers
-        state_code = str(row.get('state_code', row.get('state', ''))).strip().upper()
-        full_name = str(row.get('full_name', row.get('name', ''))).strip().title()
+        # Flexible mapping supporting statecode, state, state_code
+        state_code = str(row.get('statecode', row.get('state_code', row.get('state', '')))).strip().upper()
+        
+        # If name column doesn't exist in this sheet layout, fallback to State Code label
+        full_name = str(row.get('full_name', row.get('name', f"Corps Member ({state_code})"))).strip().title()
+        if full_name == 'Nan' or not full_name:
+            full_name = f"Corps Member ({state_code})"
         
         # Phone number handling
-        phone_raw = row.get('phone_number', row.get('phone_number', row.get('phone', '')))
+        phone_raw = row.get('phone_number', row.get('phone', ''))
         phone_number = str(int(phone_raw)) if pd.notnull(phone_raw) and str(phone_raw).replace('.', '', 1).isdigit() else str(phone_raw)
         
-        spouse_location = str(row.get('spouse_location', row.get('address', ''))).strip().title()
+        # Spouse location / permanent address handling
+        spouse_location = str(row.get('permanent_address', row.get('spouse_location', row.get('address', '')))).strip().title()
         assigned_lga = str(row.get('assigned_lga', '')).strip().title()
 
-        if state_code and state_code != 'NAN' and full_name and full_name != 'Nan':
+        if state_code and state_code != 'NAN':
             records.append({
                 'state_code': state_code,
                 'full_name': full_name,
