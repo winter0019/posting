@@ -25,6 +25,16 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 with app.app_context():
     db.create_all()
+    # Automatically add missing columns if upgrading an existing PostgreSQL table
+    try:
+        with db.engine.connect() as connection:
+            connection.execute(db.text("ALTER TABLE married_corps_members ADD COLUMN IF NOT EXISTS origin VARCHAR(100);"))
+            connection.execute(db.text("ALTER TABLE married_corps_members ADD COLUMN IF NOT EXISTS course VARCHAR(150);"))
+            connection.execute(db.text("ALTER TABLE married_corps_members ADD COLUMN IF NOT EXISTS grade VARCHAR(100);"))
+            connection.execute(db.text("ALTER TABLE married_corps_members ADD COLUMN IF NOT EXISTS gender VARCHAR(10);"))
+            connection.commit()
+    except Exception as e:
+        print("Migration check note:", e)
 
 @app.route('/', methods=['GET'])
 def index():
