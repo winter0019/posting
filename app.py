@@ -50,26 +50,34 @@ def upload_excel():
             processed_count = 0
 
             for rec in records:
-                zone = assign_zone_to_lga(rec['assigned_lga'])
+                zone = assign_zone_to_lga(rec.get('assigned_lga', ''))
                 
                 # Upsert based on state_code
                 existing = MarriedCorpsMember.query.filter_by(state_code=rec['state_code']).first()
                 if existing:
                     existing.full_name = rec['full_name']
+                    existing.gender = rec.get('gender')
                     existing.phone_number = rec.get('phone_number')
                     existing.spouse_location = rec.get('spouse_location')
                     existing.current_ppa = rec.get('current_ppa')
-                    existing.assigned_lga = rec['assigned_lga']
+                    existing.assigned_lga = rec.get('assigned_lga')
                     existing.zone = zone
+                    existing.origin = rec.get('origin')
+                    existing.course = rec.get('course')
+                    existing.grade = rec.get('grade')
                 else:
                     new_member = MarriedCorpsMember(
                         state_code=rec['state_code'],
                         full_name=rec['full_name'],
+                        gender=rec.get('gender'),
                         phone_number=rec.get('phone_number'),
                         spouse_location=rec.get('spouse_location'),
                         current_ppa=rec.get('current_ppa'),
-                        assigned_lga=rec['assigned_lga'],
-                        zone=zone
+                        assigned_lga=rec.get('assigned_lga'),
+                        zone=zone,
+                        origin=rec.get('origin'),
+                        course=rec.get('course'),
+                        grade=rec.get('grade')
                     )
                     db.session.add(new_member)
                 processed_count += 1
