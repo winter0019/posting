@@ -4,6 +4,7 @@ db = SQLAlchemy()
 
 class MarriedCorpsMember(db.Model):
     __tablename__ = 'married_corps_members'
+    
     id = db.Column(db.Integer, primary_key=True)
     state_code = db.Column(db.String(20), unique=True, nullable=False)
     full_name = db.Column(db.String(150), nullable=False)
@@ -11,8 +12,14 @@ class MarriedCorpsMember(db.Model):
     phone_number = db.Column(db.String(20), nullable=True)
     spouse_location = db.Column(db.String(150), nullable=True)
     current_ppa = db.Column(db.String(150), nullable=True)
-    assigned_lga = db.Column(db.String(100), nullable=False)
-    zone = db.Column(db.String(50), nullable=False)
+    assigned_lga = db.Column(db.String(100), nullable=True)
+    zone = db.Column(db.String(50), nullable=True)
+    
+    # Newly added fields matching your Excel sheet structure
+    origin = db.Column(db.String(100), nullable=True)
+    course = db.Column(db.String(150), nullable=True)
+    grade = db.Column(db.String(100), nullable=True)
+    
     updated_at = db.Column(db.DateTime, server_default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
     def to_dict(self):
@@ -25,5 +32,8 @@ class MarriedCorpsMember(db.Model):
             "spouse_location": self.spouse_location,
             "current_ppa": self.current_ppa,
             "assigned_lga": self.assigned_lga,
-            "zone": self.zone
+            "zone": self.zone,
+            "origin": self.origin,
+            "course": self.course,
+            "grade": self.grade
         }
